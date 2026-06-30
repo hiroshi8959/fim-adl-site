@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="no-referrer" />
+    <title>運動FIM ADL予後予測</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Motor FIM prediction</p>
+          <h1>運動FIMからADL到達確率を予測</h1>
+          <p class="lead">
+            入院時と2回目カンファレンス時の運動FIMをもとに、対数曲線モデルで将来の運動FIMを推定し、ADL項目別の到達確率を表示します。
+          </p>
+        </div>
+        <div class="heroPanel">
+          <span>予測運動FIM</span>
+          <strong id="heroScore">--</strong>
+          <small id="heroMeta">入力すると自動計算されます</small>
+        </div>
+      </section>
+
+      <section class="layout">
+        <form class="panel inputPanel" id="fimForm">
+          <div class="sectionTitle">
+            <h2>入力</h2>
+            <p>運動FIMは13-91点の範囲で入力してください。</p>
+          </div>
+
+          <label class="field optional">
+            <span>発症日 <small>任意・推奨</small></span>
+            <input type="date" id="onsetDate" />
+          </label>
+
+          <label class="field">
+            <span>入院日</span>
+            <input type="date" id="admissionDate" required />
+          </label>
+
+          <label class="field">
+            <span>入院時 運動FIM</span>
+            <input type="number" id="admissionFim" min="13" max="91" step="1" value="38" required />
+          </label>
+
+          <label class="field">
+            <span>2回目カンファレンス日</span>
+            <input type="date" id="conferenceDate" required />
+          </label>
+
+          <label class="field">
+            <span>2回目 運動FIM</span>
+            <input type="number" id="conferenceFim" min="13" max="91" step="1" value="50" required />
+          </label>
+
+          <label class="field">
+            <span>退院予定日</span>
+            <input type="date" id="targetDate" required />
+          </label>
+
+          <div class="switchRow">
+            <span>対数の扱い</span>
+            <label class="toggle">
+              <input type="checkbox" id="useTable" checked />
+              <span>早見表の近似値を使う</span>
+            </label>
+          </div>
+
+          <div class="note" id="dateNote">
+            発症日が未入力の場合は、入院日をDay 1として計算します。
+          </div>
+        </form>
+
+        <section class="panel resultPanel">
+          <div class="sectionTitle">
+            <h2>予測結果</h2>
+            <p id="statusText">必要な入力を確認しています。</p>
+          </div>
+
+          <div class="scoreGrid">
+            <div>
+              <span>β</span>
+              <strong id="betaValue">--</strong>
+            </div>
+            <div>
+              <span>予測運動FIM</span>
+              <strong id="predictedFim">--</strong>
+            </div>
+            <div>
+              <span>変化量</span>
+              <strong id="deltaValue">--</strong>
+            </div>
+          </div>
+
+          <div class="calcBox">
+            <div>
+              <span>2時点の日数比</span>
+              <b id="ratioAB">--</b>
+              <small id="lnAB">--</small>
+            </div>
+            <div>
+              <span>予測日の日数比</span>
+              <b id="ratioAX">--</b>
+              <small id="lnAX">--</small>
+            </div>
+          </div>
+
+          <div class="chartWrap">
+            <canvas id="curveCanvas" width="820" height="320" aria-label="運動FIM予測曲線"></canvas>
+          </div>
+        </section>
+      </section>
+
+      <section class="panel adlPanel">
+        <div class="sectionTitle rowTitle">
+          <div>
+            <h2>ADL項目別 到達確率</h2>
+            <p>色付きグラフは運動FIM合計点ごとのFIMレベル確率です。黒い縦線が現在の予測運動FIMを示します。</p>
+          </div>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="adlGrid" id="adlGrid"></div>
+      </section>
+
+      <section class="sourceNote">
+        <p>
+          参考: Koyama et al. Clin Rehabil. 2005 の対数曲線モデル、Koyama et al. J Rehabil Med. 2006 の運動FIM項目別順序ロジスティック係数。
+          本ツールは臨床判断を補助する試作で、対象条件や適応範囲の確認が必要です。入力値は端末内で計算され、外部送信されません。
+        </p>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
